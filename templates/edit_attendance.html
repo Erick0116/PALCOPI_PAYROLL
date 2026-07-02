@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Edit Attendance</h1>
+<form method="POST">
+    <label>Name:</label>
+    <input type="text" name="name" value="{{ record.name }}" required>
+
+    <label>Date:</label>
+    <input type="date" name="date" value="{{ record.date }}" required>
+
+    <label>Time In:</label>
+    <input type="time" name="time_in" value="{{ record.time_in }}" required>
+
+    <label>Time Out:</label>
+    <input type="time" name="time_out" value="{{ record.time_out }}" required>
+
+    <button type="submit" class="btn edit">Save Changes</button>
+</form>
+{% endblock %}

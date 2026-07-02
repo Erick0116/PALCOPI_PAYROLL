@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+ <!--   <h1 class="mt-4">Cash Advance</h1> -->
+
+    <!-- Search Bar -->
+    <div class="mb-3">
+        <input type="text" id="employeeSearch" class="form-control" placeholder="Search employee by name...">
+    </div>
+
+    <!-- Employee Data Grid -->
+    <table class="table table-striped mt-3" id="employeeTable">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Employment Status</th>
+                <th>Position</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.employment_status }}</td>
+                <td>{{ employee.position }}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#cashAdvanceModal"
+                            data-name="{{ employee.name }}">
+                        Cash Advance
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Cash Advance Modal -->
+<div class="modal fade" id="cashAdvanceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="cashAdvanceForm" method="POST" action="{{ url_for('cash_advance.add_cash_advance') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Cash Advance</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Employee Name</label>
+            <input type="text" class="form-control" id="employeeName" name="name" readonly>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Type</label>
+            <select class="form-select" name="type" required>
+              <option value="Personal">Personal</option>
+              <option value="Emergency">Emergency</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Amount</label>
+            <input type="number" class="form-control" name="amount" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control" name="date" value="{{ current_date }}">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Save Cash Advance</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Populate employee name in modal
+  var cashAdvanceModal = document.getElementById('cashAdvanceModal');
+  cashAdvanceModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var name = button.getAttribute('data-name');
+    var input = cashAdvanceModal.querySelector('#employeeName');
+    input.value = name;
+  });
+
+  // Search filter
+  document.getElementById('employeeSearch').addEventListener('keyup', function() {
+    var filter = this.value.toLowerCase();
+    var rows = document.querySelectorAll('#employeeTable tbody tr');
+    rows.forEach(function(row) {
+      var nameCell = row.querySelector('td:first-child');
+      if (nameCell.textContent.toLowerCase().includes(filter)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+</script>
+{% endblock %}

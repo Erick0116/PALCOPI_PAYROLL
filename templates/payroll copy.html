@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-4">Payroll</h1>
+
+<!-- Toolbar -->
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+    <!-- Search Form -->
+    <form class="d-flex flex-grow-1" method="GET" action="{{ url_for('payroll.payroll') }}">
+        <input type="text" class="form-control me-2" name="search" placeholder="Search by name" value="{{ search }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- Action Buttons -->
+    <div class="d-flex gap-2">
+        <!-- Import CSV -->
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('payroll.payroll') }}" class="d-flex gap-2">
+            <input type="file" name="csv_file" class="form-control" style="width: 200px;">
+            <button type="submit" class="btn btn-warning">Import Data CSV</button>
+        </form>
+
+        <!-- Generate Payroll Modal Trigger -->
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#generatePayrollModal">
+            Generate Payroll
+        </button>
+    </div>
+</div>
+
+<!-- Generate Payroll Modal -->
+<div class="modal fade" id="generatePayrollModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="GET" action="{{ url_for('payroll.payroll') }}">
+        <div class="modal-header">
+          <h5 class="modal-title">Select Payroll Deduction</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-2">Choose which benefit will be deducted for this payroll run:</p>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="deduction" value="sss" id="deductionSSS" checked>
+            <label class="form-check-label" for="deductionSSS">SSS</label>
+          </div>
+          <div class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="deduction" value="philhealth" id="deductionPhilhealth">
+            <label class="form-check-label" for="deductionPhilhealth">PhilHealth</label>
+          </div>
+          <div class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="deduction" value="pagibig" id="deductionPagibig">
+            <label class="form-check-label" for="deductionPagibig">Pag-IBIG</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Generate</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Deduction Banner -->
+{% if deduction %}
+<div class="alert alert-info mb-3">
+    This payroll run deducts: <strong>{{ deduction|capitalize }}</strong>
+</div>
+{% endif %}
+
+<!-- Data Grid -->
+<div class="table-responsive">
+    <table class="table table-striped table-bordered align-middle">
+    <thead class="table-dark">
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Total Hours</th>
+    <th>Late Count</th>
+    <th>Late Minutes</th>
+    <th>Late Deduction</th>
+    <th>Regular Pay</th>
+    <th>Overtime Pay</th>
+    <th>Salary</th>
+    <th>SSS</th>
+    <th>Pag-IBIG</th>
+    <th>PhilHealth</th>
+    <th>Net Pay</th>
+    <th>Payslip</th>
+</tr>
+</thead>
+
+<tbody>
+{% if payroll %}
+    {% for emp in payroll %}
+        {% if emp.verify == false %}
+        <tr>
+            <td>{{ emp.id }}</td>
+            <td>{{ emp.name }}</td>
+            <td>{{ emp.total_hours }}</td>
+            <td>{{ emp.late_count }}</td>
+            <td>{{ emp.late_minutes }}</td>
+            <td>{{ emp.late_deduction_hours }}</td>
+            <td>{{ emp.regular_pay }}</td>
+            <td>{{ emp.overtime_pay }}</td>
+            <td>{{ emp.salary | round(2) }}</td>
+            <td>{{ emp.sss | round(2) }}</td>
+            <td>{{ emp.pagibig | round(2) }}</td>
+            <td>{{ emp.philhealth | round(2) }}</td>
+            <td>{{ emp.net_pay | round(2) }}</td>
+            <td>
+                <a href="{{ url_for('payslip.payslip', emp_id=emp.id) }}" class="btn btn-info btn-sm">View Payslip</a>
+            </td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="15" class="text-center text-muted">No payroll generated yet</td>
+    </tr>
+{% endif %}
+</tbody>
+
+
+
+    </table>
+</div>
+
+<!-- Save Payroll Records -->
+<div class="mt-3 text-end">
+    <form method="POST" action="{{ url_for('payroll.save_payroll') }}">
+        <input type="hidden" name="period" value="{{ period }}">
+        <button type="submit" class="btn btn-primary">💾 Save Payroll Records</button>
+    </form>
+</div>
+
+<!-- Flash Messages / Deduction Warning Modal -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      {% if category == 'warning' %}
+        <!-- Deduction Warning Modal -->
+        <div class="modal fade" id="deductionWarningModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-warning">
+                <h5 class="modal-title">Deduction Already Applied</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                {{ message }}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script>
+          var warningModal = new bootstrap.Modal(document.getElementById('deductionWarningModal'));
+          warningModal.show();
+        </script>
+      {% else %}
+        <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% endblock %}

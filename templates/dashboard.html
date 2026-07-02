@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- <h1 class="mb-4">Employee Attendance Dashboard</h1> -->
+
+<div class="row text-center mb-4">
+    <div class="col-md-3">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Total Employees</h5>
+                <p class="fw-bold">{{ metrics.total_employees }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">On Time %</h5>
+                <p class="fw-bold">{{ metrics.on_time_percentage }}%</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">On Time Today</h5>
+                <p class="fw-bold">{{ metrics.on_time_today }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5 class="card-title">Late Today</h5>
+                <p class="fw-bold">{{ metrics.late_today }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="mb-3">Monthly Attendance Report (2019)</h2>
+<div class="card">
+    <div class="card-body">
+        <canvas id="attendanceChart"></canvas>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ report.months | tojson }},
+            datasets: [
+                {
+                    label: 'Ontime',
+                    data: {{ report.ontime | tojson }},
+                    backgroundColor: 'green'
+                },
+                {
+                    label: 'Late',
+                    data: {{ report.late | tojson }},
+                    backgroundColor: 'red'
+                }
+            ]
+        }
+    });
+</script>
+{% endblock %}

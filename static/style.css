@@ -1,0 +1,163 @@
+/* General layout */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    margin: 0;
+    background-color: #f9f9f9;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 200px;
+    background: #333;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+}
+.sidebar h2 {
+    margin-top: 0;
+}
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+.sidebar li {
+    margin: 10px 0;
+}
+.sidebar a {
+    color: white;
+    text-decoration: none;
+}
+.sidebar a:hover {
+    text-decoration: underline;
+}
+
+/* Content area */
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Toolbar with search and new button */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.toolbar form input {
+    padding: 6px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.toolbar form button {
+    padding: 6px 12px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.toolbar form button:hover {
+    opacity: 0.9;
+}
+.toolbar form input[type="date"] {
+    padding: 6px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Buttons */
+.btn {
+    padding: 6px 12px;
+    margin: 2px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.btn.new {
+    background-color: #28a745;
+    color: white;
+}
+.btn.edit {
+    background-color: #007bff;
+    color: white;
+}
+.btn.delete {
+    background-color: #dc3545;
+    color: white;
+}
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* DataGrid table */
+.datagrid {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.datagrid th, .datagrid td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+.datagrid th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+.datagrid tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.datagrid tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Date column width */
+.datagrid td:nth-child(3), .datagrid th:nth-child(3) {
+    width: 120px;
+}
+
+/* Modal styles */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.modal-content h2 {
+    margin-top: 0;
+}
+.modal-content label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+.modal-content input {
+    width: 100%;
+    padding: 6px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+.close:hover {
+    color: red;
+}
